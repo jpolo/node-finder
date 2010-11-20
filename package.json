@@ -1,6 +1,6 @@
 {
 	"name" : "finder",
-	"version" : "0.1.0",
+	"version" : "0.1.1",
 	"author" : "Julien Polo <julien.polo@altshift.fr>",
 	"description" : "Highly configurable file finder for NodeJS (works synchronously or asynchronously)",
 	"keywords" : ["file", "finder", "walk", "recursive"],
@@ -15,6 +15,12 @@
 		"lib" : "lib",
 		"test": "test"
 	},
+	"licenses" :[ 
+	  	{ 
+	  		"type" : "MIT",
+	    	"url" : "http://github.com/as-jpolo/node-finder/blob/master//LICENSE"
+	    }   
+	],
   	"dependencies"  : {
 		"vows": "*"
 	},
