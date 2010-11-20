@@ -1,0 +1,24 @@
+{
+	"name" : "finder",
+	"version" : "0.1.0",
+	"author" : "Julien Polo <julien.polo@altshift.fr>",
+	"description" : "Highly configurable file finder for NodeJS (works synchronously or asynchronously)",
+	"keywords" : ["file", "finder", "walk", "recursive"],
+	"repository" : { 
+		"type" : "git",
+		"url" : "git://github.com/as-jpolo/node-finder.git"
+	},
+	"bugs" : { 
+		"web" : "http://github.com/as-jpolo/node-finder/issues" 
+	},
+	"directories" : { 
+		"lib" : "lib",
+		"test": "test"
+	},
+  	"dependencies"  : {
+		"vows": "*"
+	},
+  	"engines" : {
+  		"node": ">=0.2.0"
+	}
+}
