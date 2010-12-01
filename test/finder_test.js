@@ -1,8 +1,17 @@
+/*jslint indent:4 */
 var vows = require('vows');
 var assert = require('assert');
 var path = require('path');
-var Finder = require('../lib/finder').Finder;
- 
+
+
+/**
+ * constants
+ */
+var __moduleTested = '../lib/' + require('path').basename(__filename.replace('_test.js', ''));
+var __filenameTested = require('fs').realpathSync(__dirname + '/' + __moduleTested + '.js');
+var finder = require(__filenameTested);
+var Finder = finder.Finder;
+
 var RESOURCE_DIR = require('fs').realpathSync(path.join(__dirname, '..', 'resource', 'finder_test'));
 
 function createFinder() {
@@ -19,34 +28,58 @@ function assertEqualDirectories(result, expected, message) {
             resultFiltered.push(dir);
         }
     });
-    
+
     expectedFiltered = [];
     expected.forEach(function (dir) {
         expectedFiltered.push(path.join(RESOURCE_DIR, dir));
     });
-    
+
     assert.deepEqual(resultFiltered, expectedFiltered, message);
 }
 
 
-/**
- * HashTest class
- */
+
+/*******************************************************************************
+ * JSLint validation
+ ******************************************************************************/
+try {
+    require('lint');
+} catch (e) {
+    console.warn('Warning: JSLint not found try `npm install lint`');
+}
+
+var batch = {};
+batch[__filename] = function (topic) {
+    var options = {};
+    assert.validateLintFile(__filename);
+};
+
+batch[__filenameTested] = function (topic) {
+    var options = {};
+    assert.validateLintFile(__filenameTested);
+};
+exports.JSLintTest = vows.describe('JSLint test').addBatch({
+    'JSLINT result': batch
+});
+
+/*******************************************************************************
+ * Finder validation
+ ******************************************************************************/
 var FinderTest = vows.describe('Finder class').addBatch({
     "fetch() / with no filter" : {
         topic : function (item) {
-            var finder = createFinder();
-            
-            finder.reset().fetch(RESOURCE_DIR, this.callback);
+            var query = createFinder();
+
+            query.reset().fetch(RESOURCE_DIR, this.callback);
         },
         'should return an array of directories' : function (topic) {
             assertEqualDirectories(topic, [
                 'dir1',
                 'dir1/dir1',
-                'dir1/dir1/file3.ext', 
+                'dir1/dir1/file3.ext',
                 'dir1/dir2',
-                'dir1/dir2/file3.ext', 
-                'dir1/file1',  
+                'dir1/dir2/file3.ext',
+                'dir1/file1',
                 'dir1/file2.ext',
                 'file.ext',
                 'file1'
@@ -55,14 +88,14 @@ var FinderTest = vows.describe('Finder class').addBatch({
     },
     "fetch() / with type filter" : {
         topic : function (item) {
-            var finder, report, test;
+            var query, report, test;
             test = this;
             report = {};
-            
-            finder = createFinder();
-            finder.reset().type(Finder.FILE).fetch(RESOURCE_DIR, function (error, result) {
+
+            query = createFinder();
+            query.reset().type(Finder.FILE).fetch(RESOURCE_DIR, function (error, result) {
                 report.testFile = result;
-                finder.reset().type(Finder.DIR).fetch(RESOURCE_DIR, function (error, result) {
+                query.reset().type(Finder.DIR).fetch(RESOURCE_DIR, function (error, result) {
                     report.testDir = result;
                     test.callback(null, report);
                 });
@@ -70,9 +103,9 @@ var FinderTest = vows.describe('Finder class').addBatch({
         },
         'should return a set of files if Finder.FILE' : function (topic) {
             assertEqualDirectories(topic.testFile, [
-                'dir1/dir1/file3.ext', 
-                'dir1/dir2/file3.ext', 
-                'dir1/file1',  
+                'dir1/dir1/file3.ext',
+                'dir1/dir2/file3.ext',
+                'dir1/file1',
                 'dir1/file2.ext',
                 'file.ext',
                 'file1'
@@ -88,14 +121,14 @@ var FinderTest = vows.describe('Finder class').addBatch({
     },
     "fetch() / with name filter" : {
         topic : function (item) {
-            var finder, report, test;
+            var query, report, test;
             test = this;
             report = {};
-            
-            finder = createFinder();
-            finder.reset().names('*.ext').fetch(RESOURCE_DIR, function (error, result) {
+
+            query = createFinder();
+            query.reset().names('*.ext').fetch(RESOURCE_DIR, function (error, result) {
                 report.testName1 = result;
-                finder.reset().names('*1').fetch(RESOURCE_DIR, function (error, result) {
+                query.reset().names('*1').fetch(RESOURCE_DIR, function (error, result) {
                     report.testName2 = result;
                     test.callback(null, report);
                 });
@@ -103,8 +136,8 @@ var FinderTest = vows.describe('Finder class').addBatch({
         },
         'should return a set of files or directories satisfying pattern' : function (topic) {
             assertEqualDirectories(topic.testName1, [
-                'dir1/dir1/file3.ext', 
-                'dir1/dir2/file3.ext',  
+                'dir1/dir1/file3.ext',
+                'dir1/dir2/file3.ext',
                 'dir1/file2.ext',
                 'file.ext'
             ]);
@@ -118,16 +151,16 @@ var FinderTest = vows.describe('Finder class').addBatch({
     },
     "fetch() / with custom filter" : {
         topic : function (item) {
-            var finder, report, test;
+            var query, report, test;
             test = this;
             report = {};
-            
-            finder = createFinder();
-            finder.reset().filter(function (file) {
+
+            query = createFinder();
+            query.reset().filter(function (file) {
                 return file.file.indexOf('file3') >= 0;
             }).fetch(RESOURCE_DIR, function (error, result) {
                 report.testFilter1 = result;
-                finder.filter(function (file) {
+                query.filter(function (file) {
                     return false;
                 }).fetch(RESOURCE_DIR, function (error, result) {
                     report.testFilter2 = result;
@@ -137,7 +170,7 @@ var FinderTest = vows.describe('Finder class').addBatch({
         },
         'should return a set of files or directories satisfying pattern' : function (topic) {
             assertEqualDirectories(topic.testFilter1, [
-                'dir1/dir1/file3.ext', 
+                'dir1/dir1/file3.ext',
                 'dir1/dir2/file3.ext'
             ]);
             assertEqualDirectories(topic.testFilter2, []);
@@ -145,14 +178,14 @@ var FinderTest = vows.describe('Finder class').addBatch({
     },
     "fetch() / with exclude filter" : {
         topic : function (item) {
-            var finder, report, test;
+            var query, report, test;
             test = this;
             report = {};
-            
-            finder = createFinder();
-            finder.reset().exclude('dir*').fetch(RESOURCE_DIR, function (error, result) {
+
+            query = createFinder();
+            query.reset().exclude('dir*').fetch(RESOURCE_DIR, function (error, result) {
                 report.testExclude1 = result;
-                finder.reset().exclude('*2').fetch(RESOURCE_DIR, function (error, result) {
+                query.reset().exclude('*2').fetch(RESOURCE_DIR, function (error, result) {
                     report.testExclude2 = result;
                     test.callback(null, report);
                 });
@@ -166,30 +199,29 @@ var FinderTest = vows.describe('Finder class').addBatch({
             assertEqualDirectories(topic.testExclude2, [
                 'dir1',
                 'dir1/dir1',
-                'dir1/dir1/file3.ext',  
-                'dir1/file1',  
+                'dir1/dir1/file3.ext',
+                'dir1/file1',
                 'dir1/file2.ext',
                 'file.ext',
                 'file1'
             ]);
         }
-    },
-    
-    
+    }
+}).addBatch({
     "fetchSync() / with no filter" : {
         topic : function (item) {
-            var finder = createFinder();
-            
-            return finder.fetchSync(RESOURCE_DIR);
+            var query = createFinder();
+
+            return query.fetchSync(RESOURCE_DIR);
         },
         'should return an array of directories' : function (topic) {
             assertEqualDirectories(topic, [
                 'dir1',
                 'dir1/dir1',
-                'dir1/dir1/file3.ext', 
+                'dir1/dir1/file3.ext',
                 'dir1/dir2',
-                'dir1/dir2/file3.ext', 
-                'dir1/file1',  
+                'dir1/dir2/file3.ext',
+                'dir1/file1',
                 'dir1/file2.ext',
                 'file.ext',
                 'file1'
@@ -198,19 +230,19 @@ var FinderTest = vows.describe('Finder class').addBatch({
     },
     "fetchSync() / with type filter" : {
         topic : function (item) {
-            var finder, report, test;
+            var query, report, test;
             report = {};
-            
-            finder = createFinder();
-            report.testFile = finder.reset().type(Finder.FILE).fetchSync(RESOURCE_DIR);
-            report.testDir = finder.reset().type(Finder.DIR).fetchSync(RESOURCE_DIR);
+
+            query = createFinder();
+            report.testFile = query.reset().type(Finder.FILE).fetchSync(RESOURCE_DIR);
+            report.testDir = query.reset().type(Finder.DIR).fetchSync(RESOURCE_DIR);
             return report;
         },
         'should return a set of files if Finder.FILE' : function (topic) {
             assertEqualDirectories(topic.testFile, [
-                'dir1/dir1/file3.ext', 
-                'dir1/dir2/file3.ext', 
-                'dir1/file1',  
+                'dir1/dir1/file3.ext',
+                'dir1/dir2/file3.ext',
+                'dir1/file1',
                 'dir1/file2.ext',
                 'file.ext',
                 'file1'
@@ -226,20 +258,20 @@ var FinderTest = vows.describe('Finder class').addBatch({
     },
     "fetchSync() / with name filter" : {
         topic : function (item) {
-            var finder, report, test;
+            var query, report, test;
             test = this;
             report = {};
-            
-            finder = createFinder();
-            report.testName1 = finder.reset().names('*.ext').fetchSync(RESOURCE_DIR);
-            report.testName2 = finder.reset().names('*1').fetchSync(RESOURCE_DIR);
-            
+
+            query = createFinder();
+            report.testName1 = query.reset().names('*.ext').fetchSync(RESOURCE_DIR);
+            report.testName2 = query.reset().names('*1').fetchSync(RESOURCE_DIR);
+
             return report;
         },
         'should return a set of files or directories satisfying pattern' : function (topic) {
             assertEqualDirectories(topic.testName1, [
-                'dir1/dir1/file3.ext', 
-                'dir1/dir2/file3.ext',  
+                'dir1/dir1/file3.ext',
+                'dir1/dir2/file3.ext',
                 'dir1/file2.ext',
                 'file.ext'
             ]);
@@ -253,16 +285,16 @@ var FinderTest = vows.describe('Finder class').addBatch({
     },
     "fetchSync() / with custom filter" : {
         topic : function (item) {
-            var finder, report, test;
+            var query, report, test;
             test = this;
             report = {};
-            
-            finder = createFinder();
-            report.testFilter1 = finder.reset().filter(function (file) {
+
+            query = createFinder();
+            report.testFilter1 = query.reset().filter(function (file) {
                 return file.file.indexOf('file3') >= 0;
             }).fetchSync(RESOURCE_DIR);
 
-            report.testFilter2 = finder.filter(function (file) {
+            report.testFilter2 = query.filter(function (file) {
                 return false;
             }).fetchSync(RESOURCE_DIR);
 
@@ -270,7 +302,7 @@ var FinderTest = vows.describe('Finder class').addBatch({
         },
         'should return a set of files or directories satisfying pattern' : function (topic) {
             assertEqualDirectories(topic.testFilter1, [
-                'dir1/dir1/file3.ext', 
+                'dir1/dir1/file3.ext',
                 'dir1/dir2/file3.ext'
             ]);
             assertEqualDirectories(topic.testFilter2, []);
@@ -278,14 +310,14 @@ var FinderTest = vows.describe('Finder class').addBatch({
     },
     "fetchSync() / with exclude filter" : {
         topic : function (item) {
-            var finder, report, test;
+            var query, report, test;
             test = this;
             report = {};
-            
-            finder = createFinder();
-            report.testExclude1 = finder.reset().exclude('dir*').fetchSync(RESOURCE_DIR);
-            report.testExclude2 = finder.reset().exclude('*2').fetchSync(RESOURCE_DIR);
-            
+
+            query = createFinder();
+            report.testExclude1 = query.reset().exclude('dir*').fetchSync(RESOURCE_DIR);
+            report.testExclude2 = query.reset().exclude('*2').fetchSync(RESOURCE_DIR);
+
             return report;
         },
         'should return a set of files and dir without the excluded directories' : function (topic) {
@@ -296,8 +328,8 @@ var FinderTest = vows.describe('Finder class').addBatch({
             assertEqualDirectories(topic.testExclude2, [
                 'dir1',
                 'dir1/dir1',
-                'dir1/dir1/file3.ext',  
-                'dir1/file1',  
+                'dir1/dir1/file3.ext',
+                'dir1/file1',
                 'dir1/file2.ext',
                 'file.ext',
                 'file1'
