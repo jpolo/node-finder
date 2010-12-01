@@ -66,6 +66,65 @@ exports.JSLintTest = vows.describe('JSLint test').addBatch({
  * Finder validation
  ******************************************************************************/
 var FinderTest = vows.describe('Finder class').addBatch({
+    "type()": {
+        topic: function () {
+            return createFinder();
+        },
+        'should return this' : function (topic) {
+            assert.equal(topic.type('file'), topic);
+        },
+        'should throw error if parameter is wrong' : function (topic) {
+            assert.throws(function () {
+                topic.type('non_valid');
+            });
+        }
+    },
+    "names()": {
+        topic: function () {
+            return createFinder();
+        },
+        'should return this' : function (topic) {
+            assert.doesNotThrow(function () {
+                topic.names('namepattern');
+            });
+            assert.equal(topic.names('namepattern'), topic);
+        },
+        'should throw error if parameter is wrong' : function (topic) {
+            assert.throws(function () {
+                topic.names({});
+            });
+            assert.throws(function () {
+                topic.names(1);
+            });
+            assert.throws(function () {
+                topic.names(function () {});
+            });
+        }
+    },
+    "filter()": {
+        topic: function () {
+            return createFinder();
+        },
+        'should return this' : function (topic) {
+            assert.doesNotThrow(function () {
+                topic.filter(function () {});
+            });
+            assert.equal(topic.filter(function () {}), topic);
+        },
+        'should throw error if parameter is wrong' : function (topic) {
+            var query = createFinder();
+            assert.throws(function () {
+                query.filter({});
+            });
+            assert.throws(function () {
+                query.filter(1);
+            });
+            assert.throws(function () {
+                query.filter('name');
+            });
+        }
+    },
+
     "fetch() / with no filter" : {
         topic : function (item) {
             var query = createFinder();
@@ -132,6 +191,12 @@ var FinderTest = vows.describe('Finder class').addBatch({
                     report.testName2 = result;
                     test.callback(null, report);
                 });
+            });
+        },
+        'should throw error if parameter is wrong' : function (topic) {
+            var query = createFinder();
+            assert.throws(function () {
+                query.type('non_valid');
             });
         },
         'should return a set of files or directories satisfying pattern' : function (topic) {

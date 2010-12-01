@@ -1,6 +1,6 @@
 {
 	"name" : "finder",
-	"version" : "0.1.2",
+	"version" : "0.1.3",
 	"author" : "Julien Polo <julien.polo@altshift.fr>",
 	"description" : "Highly configurable file finder for NodeJS (works synchronously or asynchronously)",
 	"keywords" : ["file", "finder", "walk", "recursive"],
