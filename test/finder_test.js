@@ -43,24 +43,10 @@ function assertEqualDirectories(result, expected, message) {
  * JSLint validation
  ******************************************************************************/
 try {
-    require('lint');
+    require('lint').vows.createTest([ __filename, __filenameTested ]).export(module);
 } catch (e) {
     console.warn('Warning: JSLint not found try `npm install lint`');
 }
-
-var batch = {};
-batch[__filename] = function (topic) {
-    var options = {};
-    assert.validateLintFile(__filename);
-};
-
-batch[__filenameTested] = function (topic) {
-    var options = {};
-    assert.validateLintFile(__filenameTested);
-};
-exports.JSLintTest = vows.describe('JSLint test').addBatch({
-    'JSLINT result': batch
-});
 
 /*******************************************************************************
  * Finder validation
