@@ -11,6 +11,7 @@ var __moduleTested = '../lib/' + require('path').basename(__filename.replace('_t
 var __filenameTested = require('fs').realpathSync(__dirname + '/' + __moduleTested + '.js');
 var finder = require(__filenameTested);
 var Finder = finder.Finder;
+var NameList = finder.NameList;
 
 var RESOURCE_DIR = require('fs').realpathSync(path.join(__dirname, '..', 'resource', 'finder_test'));
 
@@ -384,6 +385,59 @@ var FinderTest = vows.describe('Finder class').addBatch({
                 'dir1/file2.ext',
                 'file.ext',
                 'file1'
+            ]);
+        }
+    },
+    "fetchSync() / with nested name filters" : {
+        topic : function (item) {
+            var query, report, test;
+            test = this;
+            report = {};
+
+            query = createFinder();
+            report.testNestedName1 = query.reset().names('*.ext', "*2*").fetchSync(RESOURCE_DIR);
+            report.testNestedName2 = query.reset().names('*.ext').names("*2*").fetchSync(RESOURCE_DIR);
+            report.testNestedName3 = query.reset().names(new NameList(NameList.MODE_ANY, '*1', '*.ext')).fetchSync(RESOURCE_DIR);
+            report.testNestedName4 = query.reset().names(new NameList(NameList.MODE_ANY).addNames('*1', '*.ext')).fetchSync(RESOURCE_DIR);
+            report.testNestedName5 = query.reset().names('*.ext', new NameList(NameList.MODE_ANY).addNames(['*1*', '*2*'])).fetchSync(RESOURCE_DIR);
+            report.testNestedName6 = query.reset().names('*.ext', new NameList(NameList.MODE_ANY).addNames('*2*').addNames('*3*')).fetchSync(RESOURCE_DIR);
+
+            return report;
+        },
+        'should return a set of files or directories satisfying pattern' : function (topic) {
+            assertEqualDirectories(topic.testNestedName1, [
+                'dir1/file2.ext',
+            ]);
+            assertEqualDirectories(topic.testNestedName2, [
+                'dir1/file2.ext',
+            ]);
+            assertEqualDirectories(topic.testNestedName3, [
+                'dir1',
+                'dir1/dir1',
+                'dir1/dir1/file3.ext',
+                'dir1/dir2/file3.ext',
+                'dir1/file1',
+                'dir1/file2.ext',
+                'file.ext',
+                'file1'
+            ]);
+            assertEqualDirectories(topic.testNestedName4, [
+                'dir1',
+                'dir1/dir1',
+                'dir1/dir1/file3.ext',
+                'dir1/dir2/file3.ext',
+                'dir1/file1',
+                'dir1/file2.ext',
+                'file.ext',
+                'file1'
+            ]);
+            assertEqualDirectories(topic.testNestedName5, [
+                'dir1/file2.ext'
+            ]);
+            assertEqualDirectories(topic.testNestedName6, [
+                'dir1/dir1/file3.ext',
+                'dir1/dir2/file3.ext',
+                'dir1/file2.ext'
             ]);
         }
     }
