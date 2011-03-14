@@ -1,4 +1,4 @@
-/*jslint indent:4 */
+/*jslint nodejs:true, indent:4 */
 var vows = require('vows');
 var assert = require('assert');
 var path = require('path');
@@ -7,11 +7,11 @@ var path = require('path');
 /**
  * constants
  */
-var __moduleTested = '../lib/' + require('path').basename(__filename.replace('_test.js', ''));
+var __moduleTested = '../lib/' + require('path').basename(__filename.replace('-test.js', ''));
 var __filenameTested = require('fs').realpathSync(__dirname + '/' + __moduleTested + '.js');
 var finder = require(__filenameTested);
-var Finder = finder.Finder;
-var NameList = finder.NameList;
+var Finder = finder.Finder,
+    NameFilter = finder.NameFilter;
 
 var RESOURCE_DIR = require('fs').realpathSync(path.join(__dirname, '..', 'resource', 'finder_test'));
 
@@ -397,10 +397,10 @@ var FinderTest = vows.describe('Finder class').addBatch({
             query = createFinder();
             report.testNestedName1 = query.reset().names('*.ext', "*2*").fetchSync(RESOURCE_DIR);
             report.testNestedName2 = query.reset().names('*.ext').names("*2*").fetchSync(RESOURCE_DIR);
-            report.testNestedName3 = query.reset().names(new NameList(NameList.MODE_ANY, '*1', '*.ext')).fetchSync(RESOURCE_DIR);
-            report.testNestedName4 = query.reset().names(new NameList(NameList.MODE_ANY).addNames('*1', '*.ext')).fetchSync(RESOURCE_DIR);
-            report.testNestedName5 = query.reset().names('*.ext', new NameList(NameList.MODE_ANY).addNames(['*1*', '*2*'])).fetchSync(RESOURCE_DIR);
-            report.testNestedName6 = query.reset().names('*.ext', new NameList(NameList.MODE_ANY).addNames('*2*').addNames('*3*')).fetchSync(RESOURCE_DIR);
+            report.testNestedName3 = query.reset().names(new NameFilter(NameFilter.MODE_ANY, '*1', '*.ext')).fetchSync(RESOURCE_DIR);
+            report.testNestedName4 = query.reset().names(new NameFilter(NameFilter.MODE_ANY).addNames('*1', '*.ext')).fetchSync(RESOURCE_DIR);
+            report.testNestedName5 = query.reset().names('*.ext', new NameFilter(NameFilter.MODE_ANY).addNames(['*1*', '*2*'])).fetchSync(RESOURCE_DIR);
+            report.testNestedName6 = query.reset().names('*.ext', new NameFilter(NameFilter.MODE_ANY).addNames('*2*').addNames('*3*')).fetchSync(RESOURCE_DIR);
 
             return report;
         },
