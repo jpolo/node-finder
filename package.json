@@ -6,10 +6,10 @@
 	"keywords" : ["file", "finder", "walk", "recursive"],
 	"repository" : { 
 		"type" : "git",
-		"url" : "git://github.com/as-jpolo/node-finder.git"
+		"url" : "git://github.com/jpolo/node-finder.git"
 	},
 	"bugs" : { 
-		"web" : "http://github.com/as-jpolo/node-finder/issues" 
+		"web" : "http://github.com/jpolo/node-finder/issues" 
 	},
 	"main": "./lib/finder",
 	"directories" : { 
@@ -19,7 +19,7 @@
 	"licenses" :[ 
 	  	{ 
 	  		"type" : "MIT",
-	    	"url" : "http://github.com/as-jpolo/node-finder/blob/master//LICENSE"
+	    	"url" : "http://github.com/jpolo/node-finder/blob/master//LICENSE"
 	    }   
 	],
   	"dependencies"  : {

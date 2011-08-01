@@ -6,7 +6,7 @@ See finder.js for examples and use cases
 
 HOW TO INSTALL:
 
- 1. Install plugin `git clone git://github.com/as-jpolo/node-finder.git .` OR install via npm `npm install finder` 
+ 1. Install plugin `git clone git://github.com/jpolo/node-finder.git .` OR install via npm `npm install finder` 
  2. Include the library in your path
 
 CHANGELOG:
