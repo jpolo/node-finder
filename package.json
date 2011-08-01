@@ -1,30 +1,34 @@
 {
-	"name" : "finder",
-	"version" : "0.1.3-1",
-	"author" : "Julien Polo <julien.polo@altshift.fr>",
-	"description" : "Highly configurable file finder for NodeJS (works synchronously or asynchronously)",
-	"keywords" : ["file", "finder", "walk", "recursive"],
-	"repository" : { 
-		"type" : "git",
-		"url" : "git://github.com/jpolo/node-finder.git"
-	},
-	"bugs" : { 
-		"web" : "http://github.com/jpolo/node-finder/issues" 
-	},
-	"main": "./lib/finder",
-	"directories" : { 
-		"lib" : "lib",
-		"test": "test"
-	},
-	"licenses" :[ 
-	  	{ 
-	  		"type" : "MIT",
-	    	"url" : "http://github.com/jpolo/node-finder/blob/master//LICENSE"
-	    }   
-	],
-  	"dependencies"  : {
-	},
-  	"engines" : {
-  		"node": ">=0.2.0"
-	}
+    "name": "finder",
+    "version": "0.1.4",
+    "author": { 
+        "name" : "Julien Polo",
+        "email" : "julien.polo@gmail.com",
+        "url" : "http://github.com/jpolo"
+    },
+    "description": "Highly configurable file finder for NodeJS (works synchronously or asynchronously)",
+    "keywords": ["file", "finder", "walk", "recursive"],
+    "repository": { 
+        "type" : "git",
+        "url" : "git://github.com/jpolo/node-finder.git"
+    },
+    "bugs": { 
+        "web" : "http://github.com/jpolo/node-finder/issues" 
+    },
+    "main": "lib/finder",
+    "directories": { 
+        "lib" : "lib",
+        "test": "test"
+    },
+    "licenses":[
+        { 
+            "type" : "MIT",
+            "url" : "http://github.com/jpolo/node-finder/blob/master//LICENSE"
+        }   
+    ],
+    "dependencies": {
+    },
+    "engines": {
+        "node": ">=0.2.0"
+    }
 }
